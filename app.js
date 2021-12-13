@@ -4,6 +4,7 @@ const app = express()
 const exphbs = require('express-handlebars')
 const Todo = require('./models/todo') //載入todo model
 const bodyParser = require('body-parser')
+const todo = require('./models/todo')
 
 // 建立名為hbs的樣版引擎，並設定express的相關參數
 app.engine('hbs', exphbs({
@@ -50,6 +51,29 @@ app.get('/todos/:id', (req, res) => {
         .lean()
         .then((todo) => res.render('detail', { todo }))
         .catch((error => console.log(error)))
+})
+
+app.get('/todos/:id/edit', (req, res) => {
+    const id = req.params.id
+    return Todo.findById(id)
+        .lean()
+        .then((todo) => res.render('edit', { todo }))
+        .catch((error => console.log(error)))
+})
+
+app.post('/todos/:id/edit', (req, res) => {
+    //id 和 name 兩種資料都來自客戶端，id 要從網址上用 req.params.id 拿下來，而 name 要用 req.body.name 從表單拿出來
+    const id = req.params.id
+    const name = req.body.name
+
+    //需要等待資料庫返回執行結果，才能進行下一個動作，所以這裡有兩段的 .then()
+    return Todo.findById({ id })
+        .then(todo => {
+            todo.name = name
+            return todo.save() //因操作單一資料所以用save而非create
+        })
+        .then(() => res.redirect(`/todos/${id}`))
+        .catch(error => console.log(error))
 })
 
 app.listen(3000, () => {
