@@ -1,1 +1,9 @@
-<h2>hello, I am testing!</h2>
+<ul>
+  {{!-- 迴圈開始 --}}
+  {{#each todos}} 
+  <li>
+    {{this.name}}
+  </li>
+  {{/each}} 
+  {{!-- 迴圈結束 --}}
+</ul>
