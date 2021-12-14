@@ -67,7 +67,7 @@ app.post('/todos/:id/edit', (req, res) => {
     const name = req.body.name
 
     //需要等待資料庫返回執行結果，才能進行下一個動作，所以這裡有兩段的 .then()
-    return Todo.findById({ id })
+    return Todo.findById(id)
         .then(todo => {
             todo.name = name
             return todo.save() //因操作單一資料所以用save而非create
